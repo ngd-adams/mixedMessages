@@ -21,7 +21,7 @@ Welcome to the console-based Blackjack game! This simple implementation allows y
    - If your hand value is below 18, the program will automatically "hit" (draw a new card) until reaching the threshold.
    - If you achieve "blackjack" with the first two cards (an Ace and a 10-value card), you win the round immediately.
    - If your hand value exceeds 21, the game ends, and the dealer wins.
-5. Once you decide to "stand," the dealer will then draw cards until reaching a total of 17 or higher. The dealer will automatically "stand" once their hand reaches this threshold.
+5. Once you decide to "stand," the dealer will then draw cards until reaching a total of 16 or higher. The dealer will automatically "stand" once their hand reaches this threshold.
 6. The winner is determined based on the final hand values.
 
 **Caveats:**

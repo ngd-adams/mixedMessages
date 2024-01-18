@@ -115,7 +115,7 @@ const drawCard = (playerHand, dealerHand, playerTotalValue, participant) => {
 };
 
 // Game loop for the player
-while (playerTotalValue <= playerStandThrehold) {
+while (playerTotalValue < playerStandThrehold) {
     playerTotalValue = drawCard(hands.player, hands.dealer, playerTotalValue, 'You');
 
     if (playerTotalValue === blackjack) {
@@ -133,7 +133,7 @@ console.log('You stand.');
 // Game loop for the dealer
 if (playerTotalValue <= blackjack) {
     dealerTotalValue = calculateHandValue(hands.dealer);
-    while (dealerTotalValue <= dealerStandThrehold) {
+    while (dealerTotalValue < dealerStandThrehold) {
         dealerTotalValue = drawCard(hands.dealer, hands.player, dealerTotalValue, 'Dealer');
     }
 };
