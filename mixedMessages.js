@@ -1,5 +1,8 @@
 const suits = ['spade', 'club', 'diamond', 'heart'];
 const ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace'];
+const blackjack = 21;
+const dealerStandThrehold = 16;
+const playerStandThrehold = 18;
 
 // Function to generate a random suit
 const randSuit = arr => {
@@ -72,7 +75,7 @@ const calculateHandValue = hand => {
     // Determine the value of Aces (either 1 or 11) to get closest to 21 without busting
     
     for (let i = 0; i < numAces; i++) {
-        if (totalValue + 11 <= 21) {
+        if (totalValue + 11 <= blackjack) {
             totalValue += 11;
         } else {
             totalValue += 1;
@@ -84,6 +87,8 @@ const calculateHandValue = hand => {
 
 let playerTotalValue = calculateHandValue(hands.player);
 let dealerTotalValue = calculateHandValue(hands.dealer);
+let playerGotBlackjack = false;
+
 
 //console.log('Player hand:', hands.player);
 console.log('Your total value:', playerTotalValue);
@@ -91,6 +96,8 @@ console.log('Your total value:', playerTotalValue);
 //console.log('Dealer hand:', hands.dealer);
 console.log("Dealer's total value:", dealerTotalValue);
 
+
+//function for drawing new cards
 const drawCard = (playerHand, dealerHand, playerTotalValue, participant) => {
     let newCard;
 
@@ -101,85 +108,54 @@ const drawCard = (playerHand, dealerHand, playerTotalValue, participant) => {
     playerHand.push(newCard);
     playerTotalValue = calculateHandValue(playerHand);
 
-    console.log(`${participant} hit and drew the ${newCard.rank} of ${newCard.suit}s`);
-    console.log(`${participant}r total value is now: ${playerTotalValue}`);
-
-    return playerTotalValue;
-};
-
-playerTotalValue = calculateHandValue(hands.player);
-while (playerTotalValue <= 18) {
-    playerTotalValue = drawCard(hands.player, hands.dealer, playerTotalValue, 'You');
-
-    if (playerTotalValue === 21) {
-        console.log('Blackjack! Player wins!');
-        break; // Use break instead of return to exit the loop
-    } else if (playerTotalValue > 21) {
-        console.log('You went bust! Dealer wins!');
-        break; // Use break instead of return to exit the loop
-    }
-};
-
-
-
-/* NEW CODE HERE -> person has to hit all before the dealer gets delt, put the rules in README as not quite actual Blackjack
-
-//later include The dealer must continue to take cards until the total is 17 or more, at which point the dealer must stand. If the dealer has an ace, and counting it as 11 would bring the total to 17 or more (but not over 21), the dealer must count the ace as 11 and stand
-// player decides to hit if less than 14 but stands at 19
-
-console.log(`you were delt ${yourCard1} & ${yourCard2} your total is ${yourtotal1}`);
-console.log(`Blackjack!`); // wrap in an if statement for the option of 21
-console.log(`the dealer got ${dealerCard1}` & ${dealerCard2} the dealer has ${dealertotal}`);
-*/
-
-// Function to draw a new card and update the hand and total value
-const drawCard = (playerHand, dealerHand, playerTotalValue, participant) => {
-    let newCard = generateRandomCard(suits, ranks);
-
-    while (!isCardInHand(newCard, playerHand) || !isCardInHand(newCard, dealerHand)) {
-        // Ensure the new card is not a duplicate in either hand
-        newCard = generateRandomCard(suits, ranks);
-    }
-
-    playerHand.push(newCard);
-    playerTotalValue = calculateHandValue(playerHand);
-
-    console.log(`${participant} drew the ${newCard.rank} of ${newCard.suit}s`);
-    console.log(`${participant}'s total value is now: ${playerTotalValue}`);
+    console.log(`${participant === 'You' ? 'You' : participant } hit and drew the ${newCard.rank} of ${newCard.suit}s`);
+    console.log(`${participant === 'You' ? 'Your' : participant + "'s"} total value is now: ${playerTotalValue}`);
 
     return playerTotalValue;
 };
 
 // Game loop for the player
-playerTotalValue = calculateHandValue(hands.player);
-while (playerTotalValue <= 18) {
-    playerTotalValue = drawCard(hands.player, hands.dealer, playerTotalValue, 'Player');
+while (playerTotalValue < playerStandThrehold) {
+    playerTotalValue = drawCard(hands.player, hands.dealer, playerTotalValue, 'You');
 
-    if (playerTotalValue === 21) {
+    if (playerTotalValue === blackjack) {
         console.log('Blackjack! Player wins!');
-        break;
+        process.exit(); // Exit the script after printing the message
     } else if (playerTotalValue > 21) {
-        console.log('Player went bust! Dealer wins!');
-        break;
+        console.log('You went bust! Dealer wins!');
+        process.exit(); // Exit the script after printing the message
     }
-}
+};
+
+// Print message when the player stands
+console.log('You stand.');
 
 // Game loop for the dealer
-let dealerTotalValue = calculateHandValue(hands.dealer);
-while (dealerTotalValue <= 16) {
-    dealerTotalValue = drawCard(hands.dealer, hands.player, dealerTotalValue, 'Dealer');
-
-    if (dealerTotalValue > 21) {
-        console.log('Dealer went bust! Player wins!');
-        return;
+if (playerTotalValue <= blackjack) {
+    dealerTotalValue = calculateHandValue(hands.dealer);
+    while (dealerTotalValue <= dealerStandThrehold) {
+        dealerTotalValue = drawCard(hands.dealer, hands.player, dealerTotalValue, 'Dealer');
     }
-}
+};
+
+// Print message when the dealer stands
+console.log('Dealer stands.');
 
 // Determine the winner
-if (playerTotalValue > dealerTotalValue) {
+if (playerTotalValue === blackjack && dealerTotalValue === blackjack) {
+    console.log('It\'s a tie!');
+} else if (playerTotalValue === dealerTotalValue) {
+    console.log('It\'s a tie!');
+} else if (playerTotalValue === blackjack) {
+    console.log('Blackjack! Player wins!');
+} else if (dealerTotalValue === blackjack && playerTotalValue < blackjack) {
+    console.log('Dealer got Blackjack! Player loses!');
+} else if (dealerTotalValue > blackjack) {
+    console.log('Dealer went bust! Player wins!');
+} else if (playerTotalValue > blackjack) {
+    console.log('You went bust! Dealer wins!');
+} else if (playerTotalValue > dealerTotalValue) {
     console.log('Player wins!');
-} else if (dealerTotalValue > playerTotalValue) {
-    console.log('Dealer wins!');
 } else {
-    console.log('It's a tie!');
-}
+    console.log('Dealer wins!');
+};
