@@ -6,7 +6,7 @@ Welcome to the console-based Blackjack game! This simple implementation allows y
 
 ## Rules
 
-- The game is played with a standard 52-card deck.
+- The game is played with a standard 52-card deck (no cards can duplicate).
 - Face cards (King, Queen, Jack) have a value of 10, and Aces can be either 1 or 11 (optimal value determined by the program).
 - The goal is to get a hand value as close to 21 as possible without exceeding it.
 - If a player's hand value is 21 with the first two cards (an Ace and a 10-value card), they achieve "blackjack" and win the round.
