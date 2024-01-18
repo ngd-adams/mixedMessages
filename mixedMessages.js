@@ -18,9 +18,9 @@ const generateRandomCard = (arr1, arr2) => {
     return { suit: randSuit(arr1), rank: randRank(arr2) };
 };
 
-// Function to check if a card is already in the given array
-const isCardInHand = (card, array) => {
-    return array.some(item => item.suit === card.suit && item.rank === card.rank);
+// Function to check if a card is already in the given hand
+const isCardInHand = (card, hand) => {
+    return hand.some(item => item.suit === card.suit && item.rank === card.rank);
 };
 
 // Function to deal cards to the player and dealer without duplicates
@@ -29,22 +29,25 @@ const dealCards = () => {
     const dealerHand = [];
 
     while (playerHand.length < 2 || dealerHand.length < 2) {
-        const newCard = generateRandomCard(suits, ranks);
+        const newCardPlayer = generateRandomCard(suits, ranks);
+        const newCardDealer = generateRandomCard(suits, ranks);
 
-        if (playerHand.length < 2 && !isCardInHand(newCard, playerHand)) {
-            playerHand.push(newCard);
+        if (playerHand.length < 2 && !isCardInHand(newCardPlayer, playerHand) && !isCardInHand(newCardPlayer, dealerHand)) {
+            playerHand.push(newCardPlayer);
         }
 
-        if (dealerHand.length < 2 && !isCardInHand(newCard, dealerHand)) {
-            dealerHand.push(newCard);
+        if (dealerHand.length < 2 && !isCardInHand(newCardDealer, dealerHand) && !isCardInHand(newCardDealer, playerHand)) {
+            dealerHand.push(newCardDealer);
         }
     }
 
-    return { player: playerHand, dealer: dealerHand };
+    return { player: playerHand, dealer: dealerHand }; 
 };
 
-console.log(dealCards().player);
-console.log(dealCards().dealer);
+const hands = dealCards();
+
+console.log(hands);
+
 
 /*
 const determineWinner = () => {
